@@ -26,11 +26,17 @@ app.use(cors());
 
 app.use("/api", trafficRoutes);
 
-app.use(express.static(path.join(__dirname, "../frontend/build")));
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+// });
+
+
+app.all('/*splat', (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
+
 
 setInterval(switchTrafficLights, 60000);
 
