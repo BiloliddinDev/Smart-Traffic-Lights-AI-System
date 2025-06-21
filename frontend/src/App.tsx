@@ -7,47 +7,47 @@ import AuthPage from "@/auth/login";
 import { ProtectedRoute } from "@/provider/ProtectedRoute.tsx";
 
 function App() {
-    return (
-        <Routes>
-            <Route
-                path="/"
-                element={
-                    <ProtectedRoute roles={["admin", "user"]}>
-                        <AdminHome />
-                    </ProtectedRoute>
-                }
-            />
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute roles={["admin", "user"]}>
+            <AdminHome />
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/create-light"
-                element={
-                    <ProtectedRoute roles={["admin"]}>
-                        <CreateTrafficLightForm />
-                    </ProtectedRoute>
-                }
-            />
+      <Route
+        path="/create-light"
+        element={
+          <ProtectedRoute roles={["admin"]}>
+            <CreateTrafficLightForm />
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/lights"
-                element={
-                    <ProtectedRoute roles={["admin", "user"]}>
-                        <TrafficMapView />
-                    </ProtectedRoute>
-                }
-            />
+      <Route
+        path="/lights"
+        element={
+          <ProtectedRoute roles={["admin", "user"]}>
+            <TrafficMapView />
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/map"
-                element={
-                    <ProtectedRoute roles={["admin", "user"]}>
-                        <TrafficMapView />
-                    </ProtectedRoute>
-                }
-            />
+      <Route
+        path="/map"
+        element={
+          <ProtectedRoute roles={["admin", "user"]}>
+            <TrafficMapView />
+          </ProtectedRoute>
+        }
+      />
 
-            <Route path="/login" element={<AuthPage />} />
-        </Routes>
-    );
+      <Route path="/login" element={<AuthPage />} />
+    </Routes>
+  );
 }
 
 export default App;

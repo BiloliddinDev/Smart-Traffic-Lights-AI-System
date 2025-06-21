@@ -10,7 +10,7 @@ type User = {
 type AuthContextType = {
     user: User | null;
     isAuthenticated: boolean;
-    login: (token: string) => void;
+    login: (token: string, callback?: () => void) => void;
     logout: () => void;
 };
 
@@ -38,10 +38,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, []);
 
-    const login = (token: string) => {
+    const login = (token: string, callback?: () => void) => {
         localStorage.setItem("token", token);
         const decoded: any = jwtDecode(token);
         setUser({ id: decoded.id, email: decoded.email, role: decoded.role });
+        if (callback) callback(); // ✅ navigate() ni bu yerga o'tkazamiz
     };
 
     const logout = () => {

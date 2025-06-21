@@ -1,10 +1,11 @@
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {useState} from "react";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Eye, EyeOff} from "lucide-react";
+import {useNavigate} from "react-router-dom";
+import {useAuth} from "@/context/AuthContext.tsx";
 
 type LoginFormInputs = {
     email: string;
@@ -21,6 +22,7 @@ export default function AuthPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [tab, setTab] = useState<"login" | "register">("login");
+    const {login} = useAuth();
 
     const [showPassword, setShowPassword] = useState(false);
     const togglePassword = () => setShowPassword((prev) => !prev);
@@ -28,13 +30,13 @@ export default function AuthPage() {
     const {
         register: registerLogin,
         handleSubmit: handleLoginSubmit,
-        formState: { errors: loginErrors },
+        formState: {errors: loginErrors},
     } = useForm<LoginFormInputs>();
 
     const {
         register: registerRegister,
         handleSubmit: handleRegisterSubmit,
-        formState: { errors: registerErrors },
+        formState: {errors: registerErrors},
     } = useForm<RegisterFormInputs>();
 
     const onLogin = async (data: LoginFormInputs) => {
@@ -42,18 +44,17 @@ export default function AuthPage() {
         try {
             const res = await fetch("http://localhost:5000/api/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(data),
             });
 
             const result = await res.json();
-            if (res.ok) {
-                localStorage.setItem("token", result.token);
-                navigate("/");
+            if (res.ok && result.token) {
+                login(result.token, () => navigate("/")); // ✅ Bu joy endi ishonchli ishlaydi
             } else {
                 alert(result.message || "Login error");
             }
-        } catch (err) {
+        } catch {
             alert("Network error");
         } finally {
             setLoading(false);
@@ -65,7 +66,7 @@ export default function AuthPage() {
         try {
             const res = await fetch("http://localhost:5000/api/register", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(data),
             });
 
@@ -96,7 +97,7 @@ export default function AuthPage() {
                     <form onSubmit={handleLoginSubmit(onLogin)} className="space-y-4 mt-6">
                         <Input
                             placeholder="Email"
-                            {...registerLogin("email", { required: "Email is required" })}
+                            {...registerLogin("email", {required: "Email is required"})}
                         />
                         {loginErrors.email?.message && (
                             <p className="text-sm text-red-500">{loginErrors.email.message}</p>
@@ -106,14 +107,14 @@ export default function AuthPage() {
                             <Input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Password"
-                                {...registerLogin("password", { required: "Password is required" })}
+                                {...registerLogin("password", {required: "Password is required"})}
                             />
                             <button
                                 type="button"
                                 onClick={togglePassword}
                                 className="absolute right-3 top-2.5 text-muted-foreground"
                             >
-                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                {showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}
                             </button>
                         </div>
                         {loginErrors.password?.message && (
@@ -142,7 +143,7 @@ export default function AuthPage() {
                     <form onSubmit={handleRegisterSubmit(onRegister)} className="space-y-4 mt-6">
                         <Input
                             placeholder="Name"
-                            {...registerRegister("name", { required: "Name is required" })}
+                            {...registerRegister("name", {required: "Name is required"})}
                         />
                         {registerErrors.name?.message && (
                             <p className="text-sm text-red-500">{registerErrors.name.message}</p>
@@ -150,7 +151,7 @@ export default function AuthPage() {
 
                         <Input
                             placeholder="Email"
-                            {...registerRegister("email", { required: "Email is required" })}
+                            {...registerRegister("email", {required: "Email is required"})}
                         />
                         {registerErrors.email?.message && (
                             <p className="text-sm text-red-500">{registerErrors.email.message}</p>
@@ -173,7 +174,7 @@ export default function AuthPage() {
                                 onClick={togglePassword}
                                 className="absolute right-3 top-2.5 text-muted-foreground"
                             >
-                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                {showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}
                             </button>
                         </div>
                         {registerErrors.password?.message && (
